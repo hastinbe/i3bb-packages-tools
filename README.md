@@ -1,2 +1,2 @@
 # i3bb-packages-tools
-Tools to maintain i3bb-packages-main repository
+Tools to maintain the i3bb-packages-main repository
