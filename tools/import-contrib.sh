@@ -47,9 +47,9 @@ clone_or_pull_repo() {
     if [[ -d "$CONTRIB_DIR" ]]; then
         read -n 1 -r -p "Update i3blocks-contrib? "
         echo
-    
+
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            { 
+            {
                 cd "$CONTRIB_DIR" || exit 1
                 git pull origin master || exit 1
             }
@@ -77,11 +77,11 @@ EOF
 create_config_from_markdown() {
     local -r input=${1:?$(error 'Input file is required')} \
              output=${2:?$(error 'Output file is required')}
-    local -a config 
+    local -a config
 
     if mapfile config < <(gawk -f "extract-markdown-fenced-codeblock.awk" "$input"); then
         # Check if we have INI-like named section, for loose validation that we got what we're looking for
-        if [[ ${config[0]} =~ ^\[.*\]?$ ]]; then 
+        if [[ ${config[0]} =~ ^\[.*\]?$ ]]; then
             echo "${config[*]}" > "$output"
             return 0
         fi
@@ -106,15 +106,15 @@ main() {
             MAGENTA
 
     init_colors
-    
+
     clone_or_pull_repo
-        
+
     for blocklet in "$CONTRIB_DIR"/*; do
         if [[ -d "$blocklet" ]]; then
             package=${blocklet##$CONTRIB_DIR/}
 
             [[ -n "$VERBOSE" ]] && info "Processing $blocklet..."
-    
+
             if ! [[ -f "$blocklet/i3blocks.conf" ]]; then
                 if [[ -f "$blocklet/README.md" ]]; then
                     if create_config_from_markdown "$blocklet/README.md" "$blocklet/i3blocks.conf"; then
@@ -128,9 +128,9 @@ main() {
                     continue
                 fi
             fi
-    
+
             description=$(awk -F ' | ' "/link:${package}\[\]/{print substr(\$0, index(\$0, \$4))}" "$CONTRIB_DIR/README.adoc")
-    
+
             [[ -d "$PACKAGE_DIR" ]] || mkdir "$PACKAGE_DIR"
 
             [[ -n "$VERBOSE" ]] && info "Creating package $package"
